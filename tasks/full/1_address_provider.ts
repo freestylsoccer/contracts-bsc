@@ -9,6 +9,7 @@ import {
 } from '../../helpers/configuration';
 import { getParamPerNetwork } from '../../helpers/contracts-helpers';
 import { eNetwork } from '../../helpers/types';
+import * as fs from "fs";
 
 task(
   'full:deploy-address-provider',
@@ -24,7 +25,15 @@ task(
 
     // 1. Deploy address provider and set genesis manager
     const addressesProvider = await deployLendingPoolAddressesProvider(MarketId, verify);
-
+    // console.log("addressprovider address", addressesProvider.address);
+    // console.log(addressesProvider.interface.format('json'));
+    
+    //const data = {
+    //  address:addressesProvider.address,
+    //  abi: addressesProvider.interface.format('json')
+    //}
+    
+    // fs.writeFileSync('frontend/src/contracts/protocol/configuration/LendingPoolAddressesProvider.sol/LendingPoolAddressesProvider.json', JSON.stringify(data));
     // 2. Add to registry or setup a new one
     if (!skipRegistry) {
       const providerRegistryAddress = getParamPerNetwork(

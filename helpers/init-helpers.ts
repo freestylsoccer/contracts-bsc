@@ -64,7 +64,7 @@ export const initReservesByHelper = async (
   const addressProvider = await getLendingPoolAddressesProvider();
 
   // CHUNK CONFIGURATION
-  const initChunks = 4;
+  const initChunks = 3;
 
   // Initialize variables for future reserves initialization
   let reserveTokens: string[] = [];
@@ -107,7 +107,7 @@ export const initReservesByHelper = async (
   let aTokenImplementationAddress = '';
   let stableDebtTokenImplementationAddress = '';
   let variableDebtTokenImplementationAddress = '';
-
+  /*
   // NOT WORKING ON MATIC, DEPLOYING INDIVIDUAL IMPLs INSTEAD
   // const tx1 = await waitForTx(
   //   await stableAndVariableDeployer.initDeployment([ZERO_ADDRESS], ["1"])
@@ -120,13 +120,14 @@ export const initReservesByHelper = async (
   //   rawInsertContractAddressInDb(`variableDebtTokenImpl`, variableDebtTokenImplementationAddress);
   // });
   //gasUsage = gasUsage.add(tx1.gasUsed);
+  
   stableDebtTokenImplementationAddress = await (await deployGenericStableDebtToken()).address;
   variableDebtTokenImplementationAddress = await (await deployGenericVariableDebtToken()).address;
 
   const aTokenImplementation = await deployGenericATokenImpl(verify);
   aTokenImplementationAddress = aTokenImplementation.address;
   rawInsertContractAddressInDb(`aTokenImpl`, aTokenImplementationAddress);
-
+  
   const delegatedAwareReserves = Object.entries(reservesParams).filter(
     ([_, { aTokenImpl }]) => aTokenImpl === eContractid.DelegationAwareAToken
   ) as [string, IReserveParams][];
@@ -139,7 +140,7 @@ export const initReservesByHelper = async (
       delegationAwareATokenImplementationAddress
     );
   }
-
+  
   const reserves = Object.entries(reservesParams).filter(
     ([_, { aTokenImpl }]) =>
       aTokenImpl === eContractid.DelegationAwareAToken || aTokenImpl === eContractid.AToken
@@ -218,16 +219,315 @@ export const initReservesByHelper = async (
       params: '0x10',
     });
   }
-
+  
   // Deploy init reserves per chunks
   const chunkedSymbols = chunk(reserveSymbols, initChunks);
   const chunkedInitInputParams = chunk(initInputParams, initChunks);
-
+  */
   const configurator = await getLendingPoolConfiguratorProxy();
   //await waitForTx(await addressProvider.setPoolAdmin(admin));
+  /*
+  const chunkedSymbols = [[ 'AAVE', 'BAT', 'BUSD' ],
+  [ 'DAI', 'ENJ', 'KNC' ],
+  [ 'LINK', 'MANA', 'MKR' ],
+  ['REN', 'SNX', 'SUSD' ],
+  [ 'TUSD', 'UNI', 'USDC' ],
+  [ 'USDT', 'WBTC', 'WETH' ],
+  [ 'YFI', 'ZRX', 'xSUSHI' ]]
+  */
+  
+  const chunkedSymbols = [
+  [ 'LINK', 'MANA', 'MKR' ],
+  ['REN', 'SNX', 'SUSD' ],
+  [ 'TUSD', 'UNI', 'USDC' ],
+  [ 'USDT', 'WBTC', 'WETH' ],
+  [ 'YFI', 'ZRX', 'xSUSHI' ]]
 
+  const chunkedInitInputParams =  [    
+    [    
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x3eB4cdF3719460626c212b57441f63fA55D6e391',
+        underlyingAsset: '0x41bdaE53d80F1D94fA77d7eE8F7158A7D4EaE12e',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'LINK',
+        aTokenName: 'Aave interest bearing LINK',
+        aTokenSymbol: 'aLINK',
+        variableDebtTokenName: 'Aave variable debt bearing LINK',
+        variableDebtTokenSymbol: 'variableDebtLINK',
+        stableDebtTokenName: 'Aave stable debt bearing LINK',
+        stableDebtTokenSymbol: 'stableDebtLINK',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x3eB4cdF3719460626c212b57441f63fA55D6e391',
+        underlyingAsset: '0x532a45aD46Af063aD7d4D09384b043B489f5f9d3',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'MANA',
+        aTokenName: 'Aave interest bearing MANA',
+        aTokenSymbol: 'aMANA',
+        variableDebtTokenName: 'Aave variable debt bearing MANA',
+        variableDebtTokenSymbol: 'variableDebtMANA',
+        stableDebtTokenName: 'Aave stable debt bearing MANA',
+        stableDebtTokenSymbol: 'stableDebtMANA',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x3eB4cdF3719460626c212b57441f63fA55D6e391',
+        underlyingAsset: '0x4169a12dE5447C16e64738BA00333707f9dE90F9',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'MKR',
+        aTokenName: 'Aave interest bearing MKR',
+        aTokenSymbol: 'aMKR',
+        variableDebtTokenName: 'Aave variable debt bearing MKR',
+        variableDebtTokenSymbol: 'variableDebtMKR',
+        stableDebtTokenName: 'Aave stable debt bearing MKR',
+        stableDebtTokenSymbol: 'stableDebtMKR',
+        params: '0x10'
+      },
+    ],
+    [    
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x3eB4cdF3719460626c212b57441f63fA55D6e391',
+        underlyingAsset: '0x93A93e29CB76F948750d61dEFe554Bb428131470',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'REN',
+        aTokenName: 'Aave interest bearing REN',
+        aTokenSymbol: 'aREN',
+        variableDebtTokenName: 'Aave variable debt bearing REN',
+        variableDebtTokenSymbol: 'variableDebtREN',
+        stableDebtTokenName: 'Aave stable debt bearing REN',
+        stableDebtTokenSymbol: 'stableDebtREN',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0xcB657F3277C1F09a059189B7368103096a5Af2CC',
+        underlyingAsset: '0x40bAe2A493Af539C79fc3CD7499c983c303adC1d',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'SNX',
+        aTokenName: 'Aave interest bearing SNX',
+        aTokenSymbol: 'aSNX',
+        variableDebtTokenName: 'Aave variable debt bearing SNX',
+        variableDebtTokenSymbol: 'variableDebtSNX',
+        stableDebtTokenName: 'Aave stable debt bearing SNX',
+        stableDebtTokenSymbol: 'stableDebtSNX',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x5eC7dC87Cda1B32848F74B4094DC73d026C3C204',
+        underlyingAsset: '0x40879Fc5c86e9ED5f0523eB7e47D4c80e9173A79',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'SUSD',
+        aTokenName: 'Aave interest bearing SUSD',
+        aTokenSymbol: 'aSUSD',
+        variableDebtTokenName: 'Aave variable debt bearing SUSD',
+        variableDebtTokenSymbol: 'variableDebtSUSD',
+        stableDebtTokenName: 'Aave stable debt bearing SUSD',
+        stableDebtTokenSymbol: 'stableDebtSUSD',
+        params: '0x10'
+      }
+    ],
+    [
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x70A30F9b8548B81c6A9153f9b01092c89AD08376',
+        underlyingAsset: '0xfd429e5056f3DdA1a795Cd0a2e8a35cc174de62a',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'TUSD',
+        aTokenName: 'Aave interest bearing TUSD',
+        aTokenSymbol: 'aTUSD',
+        variableDebtTokenName: 'Aave variable debt bearing TUSD',
+        variableDebtTokenSymbol: 'variableDebtTUSD',
+        stableDebtTokenName: 'Aave stable debt bearing TUSD',
+        stableDebtTokenSymbol: 'stableDebtTUSD',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0xd614f19DdaaD57c450123844F49cc4f8d9334760',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0xcB657F3277C1F09a059189B7368103096a5Af2CC',
+        underlyingAsset: '0xDB11789cF6D6c0b0dB3e91a9DeC66444fFF10006',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'UNI',
+        aTokenName: 'Aave interest bearing UNI',
+        aTokenSymbol: 'aUNI',
+        variableDebtTokenName: 'Aave variable debt bearing UNI',
+        variableDebtTokenSymbol: 'variableDebtUNI',
+        stableDebtTokenName: 'Aave stable debt bearing UNI',
+        stableDebtTokenSymbol: 'stableDebtUNI',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '6',
+        interestRateStrategyAddress: '0x672e81C8bB00cd2D108f52cec3bA8e1A8046e60f',
+        underlyingAsset: '0x2B3624B8C9b724dA7f833Af14f9ED019F0460069',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'USDC',
+        aTokenName: 'Aave interest bearing USDC',
+        aTokenSymbol: 'aUSDC',
+        variableDebtTokenName: 'Aave variable debt bearing USDC',
+        variableDebtTokenSymbol: 'variableDebtUSDC',
+        stableDebtTokenName: 'Aave stable debt bearing USDC',
+        stableDebtTokenSymbol: 'stableDebtUSDC',
+        params: '0x10'
+      }    
+    ],
+    [
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '6',
+        interestRateStrategyAddress: '0x672e81C8bB00cd2D108f52cec3bA8e1A8046e60f',
+        underlyingAsset: '0x0cF7BEC3EF406DC9E2F2f09E7146857289ed8AD1',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'USDT',
+        aTokenName: 'Aave interest bearing USDT',
+        aTokenSymbol: 'aUSDT',
+        variableDebtTokenName: 'Aave variable debt bearing USDT',
+        variableDebtTokenSymbol: 'variableDebtUSDT',
+        stableDebtTokenName: 'Aave stable debt bearing USDT',
+        stableDebtTokenSymbol: 'stableDebtUSDT',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '8',
+        interestRateStrategyAddress: '0x0bcEAa3530A00aaFf0F6A91c8f2F8aa345694BB2',
+        underlyingAsset: '0xb327dd832FE5dcc4a2af977a248E88902288dfca',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'WBTC',
+        aTokenName: 'Aave interest bearing WBTC',
+        aTokenSymbol: 'aWBTC',
+        variableDebtTokenName: 'Aave variable debt bearing WBTC',
+        variableDebtTokenSymbol: 'variableDebtWBTC',
+        stableDebtTokenName: 'Aave stable debt bearing WBTC',
+        stableDebtTokenSymbol: 'stableDebtWBTC',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0xc29D7Ac5231b1649E9Ecbf26f4894225ED46C1DA',
+        underlyingAsset: '0x662b358eD1525df242F321F626fA90C6fb2D4284',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'WETH',
+        aTokenName: 'Aave interest bearing WETH',
+        aTokenSymbol: 'aWETH',
+        variableDebtTokenName: 'Aave variable debt bearing WETH',
+        variableDebtTokenSymbol: 'variableDebtWETH',
+        stableDebtTokenName: 'Aave stable debt bearing WETH',
+        stableDebtTokenSymbol: 'stableDebtWETH',
+        params: '0x10'
+      }    
+    ],
+    [
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x3eB4cdF3719460626c212b57441f63fA55D6e391',
+        underlyingAsset: '0x66141078E00b4793F90a27Ef083E38d6FcA5230a',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'YFI',
+        aTokenName: 'Aave interest bearing YFI',
+        aTokenSymbol: 'aYFI',
+        variableDebtTokenName: 'Aave variable debt bearing YFI',
+        variableDebtTokenSymbol: 'variableDebtYFI',
+        stableDebtTokenName: 'Aave stable debt bearing YFI',
+        stableDebtTokenSymbol: 'stableDebtYFI',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x3eB4cdF3719460626c212b57441f63fA55D6e391',
+        underlyingAsset: '0xA7fA274bC43045D31Fc7390a18e0E814d8923be7',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'ZRX',
+        aTokenName: 'Aave interest bearing ZRX',
+        aTokenSymbol: 'aZRX',
+        variableDebtTokenName: 'Aave variable debt bearing ZRX',
+        variableDebtTokenSymbol: 'variableDebtZRX',
+        stableDebtTokenName: 'Aave stable debt bearing ZRX',
+        stableDebtTokenSymbol: 'stableDebtZRX',
+        params: '0x10'
+      },
+      {
+        aTokenImpl: '0x36E844f47fA43E9369F6B0C8CB4Af231c4fE09e1',
+        stableDebtTokenImpl: '0xE0d6e5401F188a0411b7F864249Bb0ef73c49049',
+        variableDebtTokenImpl: '0xA86733a15810301F4209eEa33F86D84C0DFecb4E',
+        underlyingAssetDecimals: '18',
+        interestRateStrategyAddress: '0x7eb1BF1De68674532CbD30865587e9Eb2cE8C040',
+        underlyingAsset: '0xF7AD46bDE006566Eb9Bc502A912FbF279A72621c',
+        treasury: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c',
+        incentivesController: '0x0000000000000000000000000000000000000000',
+        underlyingAssetName: 'xSUSHI',
+        aTokenName: 'Aave interest bearing xSUSHI',
+        aTokenSymbol: 'axSUSHI',
+        variableDebtTokenName: 'Aave variable debt bearing xSUSHI',
+        variableDebtTokenSymbol: 'variableDebtxSUSHI',
+        stableDebtTokenName: 'Aave stable debt bearing xSUSHI',
+        stableDebtTokenSymbol: 'stableDebtxSUSHI',
+        params: '0x10'
+      }
+    ]
+  ]
   console.log(`- Reserves initialization in ${chunkedInitInputParams.length} txs`);
   for (let chunkIndex = 0; chunkIndex < chunkedInitInputParams.length; chunkIndex++) {
+    console.log(chunkedInitInputParams[chunkIndex])
     const tx3 = await waitForTx(
       await configurator.batchInitReserve(chunkedInitInputParams[chunkIndex])
     );

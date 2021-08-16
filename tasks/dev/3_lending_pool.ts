@@ -21,10 +21,10 @@ task('dev:deploy-lending-pool', 'Deploy lending pool for dev enviroment')
 
     const addressesProvider = await getLendingPoolAddressesProvider();
 
-    const lendingPoolImpl = await deployLendingPool(verify);
-
+    // const lendingPoolImpl = await deployLendingPool(verify);
+    let lendingPoolImpl_address = "0x029130b5864A08011E051BE0C140cF5629c89669";
     // Set lending pool impl to Address Provider
-    await waitForTx(await addressesProvider.setLendingPoolImpl(lendingPoolImpl.address));
+    await waitForTx(await addressesProvider.setLendingPoolImpl(lendingPoolImpl_address));
 
     const address = await addressesProvider.getLendingPool();
     const lendingPoolProxy = await getLendingPool(address);

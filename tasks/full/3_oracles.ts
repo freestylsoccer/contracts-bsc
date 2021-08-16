@@ -53,7 +53,7 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
 
       if (notFalsyOrZeroAddress(aaveOracleAddress)) {
         aaveOracle = await await getAaveOracle(aaveOracleAddress);
-      } else {
+      } else {        
         aaveOracle = await deployAaveOracle(
           [tokens, aggregators, fallbackOracleAddress, await getWethAddress(poolConfig)],
           verify

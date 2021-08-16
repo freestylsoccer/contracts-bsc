@@ -24,6 +24,7 @@ import {
   getAllMockedTokens,
   getLendingPoolAddressesProvider,
   getWETHGateway,
+  getAaveProtocolDataProvider,
 } from '../../helpers/contracts-getters';
 import { insertContractAddressInDb } from '../../helpers/contracts-helpers';
 
@@ -50,7 +51,8 @@ task('dev:initialize-lending-pool', 'Initialize lending pool configuration.')
       filterMapBy(allTokenAddresses, (key: string) => !key.includes('UNI_'))
     );
 
-    const testHelpers = await deployAaveProtocolDataProvider(addressesProvider.address, verify);
+    //const testHelpers = await deployAaveProtocolDataProvider(addressesProvider.address, verify);
+    const testHelpers = await getAaveProtocolDataProvider();
 
     const reservesParams = getReservesConfigByPool(AavePools.proto);
 
